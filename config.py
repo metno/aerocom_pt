@@ -166,8 +166,9 @@ cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom1/AEROCOM-PHASE-I
 
 cC_StdDevExt='SIGMA'
 #cC_ObsDataCacheDir='./cache/'
-cC_ObsDataCacheDir='/lustre/storeA/users/jang/cache/'
+OBSDATACACHEDIR='/lustre/storeA/users/jang/cache/'
 cC_StdNameIniFile='./StdNames.ini'
 
-
+#DONOTCACHE
+#Revision.txt
 

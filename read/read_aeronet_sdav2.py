@@ -47,10 +47,13 @@ import aerocom_pt.config as const
 class ReadAeronetSDAV2:
 	"""Read Aeronet SDA data class
 	"""
+	#FILEMASK = '*_A*.ONEILL_20'
 	FILEMASK = '*.ONEILL_20'
 	__version__='0.01'
 	DATASET_NAME = const.AERONETSDA20NAME
 	DATASET_PATH = const.CONFIG_OBSDATAPATHS[const.AERONETSDA20NAME]
+	#Flag if the dataset contains all years or not
+	DATASET_IS_YEARLY = False
 
 	###################################################################################
 

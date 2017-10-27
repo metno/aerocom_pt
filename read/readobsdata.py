@@ -73,6 +73,8 @@ class ReadObsData(ReadAeronetSDAV2,ReadAeronetSunV2):
 		self.DATASETNAMES = []
 		self.SuperClasses = {}
 		self.infiles = []
+		#file caching
+		self.WriteCacheFile = True
 		#now init the needed superclasses
 		#pdb.set_trace()
 
@@ -122,11 +124,117 @@ class ReadObsData(ReadAeronetSDAV2,ReadAeronetSunV2):
 		"""Read observations"""
 
 		for DataSetToRead in self.DataSetsToRead:
-			self.SuperClasses[DataSetToRead].ReadDaily()
-			self.data[DataSetToRead] = self.SuperClasses[DataSetToRead].data
+			#test if the data set has yearly files or not
+			if self.SuperClasses[DataSetToRead].DATASET_IS_YEARLY:
+				#write cache file with start and end date
+				self.CacheFile = ''
+			else:
+				#write cache file without start and end date:
+				self.CacheFile = os.path.join(
+					const.OBSDATACACHEDIR, 
+					'_'.join([self.SuperClasses[DataSetToRead].DATASET_NAME,'AllYears','AllVars.plk']))
+
+			if not self.ReadCacheData(DataSetToRead):
+				self.SuperClasses[DataSetToRead].ReadDaily()
+				self.data[DataSetToRead] = self.SuperClasses[DataSetToRead].data
+				SuccessFlag = self.SaveCacheData(DataSetToRead)
+
+	###################################################################################
+	def SaveCacheData(self, DataSetToCache):
+		"""save cache file"""
+
+		if not self.WriteCacheFile:
+			return
+
+		import pickle
+
+		SuccessFlag = False
+		#get newest file in read dir
+		DataDir=self.SuperClasses[DataSetToCache].DATASET_PATH
+		NewestFileInReadDir = max(glob.iglob(os.path.join(DataDir,'*')), key=os.path.getctime)
+		NewestFileDateInReadDir = os.path.getctime(NewestFileInReadDir)
+		DoNotCacheFile = os.path.join(const.OBSDATACACHEDIR,'DONOTCACHE')
+		RevisionFile = os.path.join(DataDir,'Revision.txt')
+		Revision=''
+		if os.path.isfile(RevisionFile):
+			with open(RevisionFile, 'rt') as InFile:
+				Revision = InFile.readline().strip()
+				InFile.close()
+
+		c_CacheFile=self.CacheFile
+		print('Writing cache file ',c_CacheFile)
+		#OutHandle = gzip.open(c_CacheFile, 'wb')
+		OutHandle = open(c_CacheFile, 'wb')
+		NewestFileInReadDirSaved = NewestFileInReadDir
+		NewestFileDateInReadDirSaved = NewestFileDateInReadDir
+		RevisionSaved = Revision
+		Version = self.SuperClasses[DataSetToCache].__version__
+		pickle.dump(NewestFileInReadDirSaved, OutHandle, pickle.HIGHEST_PROTOCOL)
+		pickle.dump(NewestFileDateInReadDirSaved, OutHandle, pickle.HIGHEST_PROTOCOL)
+		pickle.dump(RevisionSaved, OutHandle, pickle.HIGHEST_PROTOCOL)
+		pickle.dump(Version, OutHandle, pickle.HIGHEST_PROTOCOL)
+		#pdb.set_trace()
+		pickle.dump(self.data[DataSetToCache], OutHandle,pickle.HIGHEST_PROTOCOL)
+		OutHandle.close()
+		print('done')
+		SuccessFlag = True
+		return SuccessFlag
 
 
 
+	###################################################################################
+
+
+	def ReadCacheData(self, DataSetToCache):
+		"""read cache file"""
+
+		import pickle
+
+		SuccessFlag = False
+		#get newest file in read dir
+		DataDir=self.SuperClasses[DataSetToCache].DATASET_PATH
+		NewestFileInReadDir = max(glob.iglob(os.path.join(DataDir,'*')), key=os.path.getctime)
+		NewestFileDateInReadDir=os.path.getctime(NewestFileInReadDir)
+		DoNotCacheFile=os.path.join(const.OBSDATACACHEDIR,'DONOTCACHE')
+		RevisionFile=os.path.join(DataDir,'Revision.txt')
+		Revision=''
+		if os.path.isfile(RevisionFile):
+			with open(RevisionFile, 'rt') as InFile:
+				Revision=InFile.readline().strip()
+				InFile.close()
+
+		c_CacheFile=self.CacheFile
+
+		#pdb.set_trace()
+		if os.path.isfile(c_CacheFile) and not os.path.isfile(DoNotCacheFile):
+			print('cache file found! Start reading...')
+			#now check if the cache file is outdated or not
+			#Inhandle=f = gzip.open(c_CacheFile,'rb')
+			InHandle=open(c_CacheFile,'rb')
+			NewestFileInReadDirSaved=pickle.load(InHandle)
+			NewestFileDateInReadDirSaved=pickle.load(InHandle)
+			RevisionSaved=pickle.load(InHandle)
+			VersionSaved=pickle.load(InHandle)
+			if (NewestFileInReadDirSaved == NewestFileInReadDir
+				and NewestFileDateInReadDirSaved == NewestFileDateInReadDir 
+				and VersionSaved == self.SuperClasses[DataSetToCache].__version__):
+				#read the obs data structs
+					self.data[DataSetToCache] = pickle.load(InHandle)
+					SuccessFlag = True
+					print('done')
+			elif VersionSaved != self.SuperClasses[DataSetToCache].__version__:
+				print('cached data comes from outdated reading routine! Rereading data...')
+		else:
+			if os.path.isfile(DoNotCacheFile):
+				print('DONOTCACHE file found! Rereading data...')
+			else:
+				#cache file not found
+				print('cache NOT file found!')
+				os.makedirs(const.OBSDATACACHEDIR, exist_ok=True)
+
+		#pdb.set_trace()
+		return SuccessFlag
+		
 
 ###################################################################################
 
