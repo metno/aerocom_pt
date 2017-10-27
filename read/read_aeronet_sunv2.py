@@ -51,6 +51,8 @@ class ReadAeronetSunV2:
 	__version__='0.01'
 	DATASET_NAME = const.AERONETSUN20NAME
 	DATASET_PATH = const.CONFIG_OBSDATAPATHS[const.AERONETSUN20NAME]
+	#Flag if the dataset contains all years or not
+	DATASET_IS_YEARLY = False
 
 	def __init__(self, VerboseFlag=False):
 		self.VerboseFlag = VerboseFlag
