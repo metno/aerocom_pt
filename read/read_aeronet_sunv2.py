@@ -48,9 +48,9 @@ class ReadAeronetSunV2:
 	"""Read Aeronet direct sun version 2 data
 	"""
 	FILEMASK = '*.lev20'
-	__version__='0.01'
-	DATASET_NAME = const.AERONETSUN20NAME
-	DATASET_PATH = const.CONFIG_OBSDATAPATHS[const.AERONETSUN20NAME]
+	__version__='0.02'
+	DATASET_NAME = const.AERONET_SUN_V2L2_AOD_DAILY_NAME
+	DATASET_PATH = const.OBSCONFIG[const.AERONET_SUN_V2L2_AOD_DAILY_NAME]['PATH']
 	#Flag if the dataset contains all years or not
 	DATASET_IS_YEARLY = False
 

@@ -49,9 +49,9 @@ class ReadAeronetSDAV2:
 	"""
 	#FILEMASK = '*_A*.ONEILL_20'
 	FILEMASK = '*.ONEILL_20'
-	__version__='0.01'
-	DATASET_NAME = const.AERONETSDA20NAME
-	DATASET_PATH = const.CONFIG_OBSDATAPATHS[const.AERONETSDA20NAME]
+	version__='0.02'
+	DATASET_NAME = const.AERONET_SUN_V2L2_SDA_DAILY_NAME
+	DATASET_PATH = const.OBSCONFIG[const.AERONET_SUN_V2L2_SDA_DAILY_NAME]['PATH']
 	#Flag if the dataset contains all years or not
 	DATASET_IS_YEARLY = False
 

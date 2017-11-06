@@ -1,174 +1,196 @@
-# general config module
-# All configuration constants are here
+################################################################
+# config.py
 #
-# The file is divided in the sub sections 
-# - general		(general)
-# - reading		(read)
-# - plotting	(plot)
-# - statistics	(stat)
-# - writing		(write)
-###############################################################
-#Parameter for monthly means
-#the key is used for the file naming, the value denotes the months used to calculate
+# configuration class for the aerocom python tools 
+#
+# this file is part of the aerocom_pt package
+#
+#################################################################
+# Created 20171106 by Jan Griesfeller for Met Norway
+#
+# Last changed: See git log
+#################################################################
+
+#Copyright (C) 2017 met.no
+#Contact information:
+#Norwegian Meteorological Institute
+#Box 43 Blindern
+#0313 OSLO
+#NORWAY
+#E-mail: jan.griesfeller@met.no
+#This program is free software; you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation; either version 3 of the License, or
+#(at your option) any later version.
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#MA 02110-1301, USA
+
+"""
+Provides access to aerocom_pt specific configuration values
+"""
+
+
 import numpy as np
+import os
+import configparser
 
-
-
-###############################################################
-# Plot config start
-StatParam={}
-StatParam['monthly']={}
-StatParam['monthly']['mALLYEARmonthly']=np.arange(1,13)
-StatParam['monthly']['m01monthly']=1
-StatParam['monthly']['m02monthly']=2
-StatParam['monthly']['m03monthly']=3
-StatParam['monthly']['m04monthly']=4
-StatParam['monthly']['m05monthly']=5
-StatParam['monthly']['m06monthly']=6
-StatParam['monthly']['m07monthly']=7
-StatParam['monthly']['m08monthly']=8
-StatParam['monthly']['m09monthly']=9
-StatParam['monthly']['m10monthly']=10
-StatParam['monthly']['m11monthly']=11
-StatParam['monthly']['m12monthly']=12
-StatParam['monthly']['mDJFmonthly']=[12,1,2]
-StatParam['monthly']['mMAMmonthly']=[3,4,5]
-StatParam['monthly']['mJJAmonthly']=[6,7,8]
-StatParam['monthly']['mSONmonthly']=[9,10,11]
-
-StatParam['daily']={}
-StatParam['daily']['mALLYEARdaily']=np.arange(1,13)
-StatParam['daily']['m01daily']=1
-StatParam['daily']['m02daily']=2
-StatParam['daily']['m03daily']=3
-StatParam['daily']['m04daily']=4
-StatParam['daily']['m05daily']=5
-StatParam['daily']['m06daily']=6
-StatParam['daily']['m07daily']=7
-StatParam['daily']['m08daily']=8
-StatParam['daily']['m09daily']=9
-StatParam['daily']['m10daily']=10
-StatParam['daily']['m11daily']=11
-StatParam['daily']['m12daily']=12
-StatParam['daily']['mDJFdaily']=[12,1,2]
-StatParam['daily']['mMAMdaily']=[3,4,5]
-StatParam['daily']['mJJAdaily']=[6,7,8]
-StatParam['daily']['mSONdaily']=[9,10,11]
-
-# plot config end
-###############################################################
 
 
 ###############################################################
 # stat config start
 #GCOS requirements
-fC_GCOSPercentCrit=np.float(0.1)
-fC_GCOSAbsCrit=np.float(0.04)
+GCOSPERCENTCRIT=np.float(0.1)
+GCOSABSCRIT=np.float(0.04)
 # stat config end
 ###############################################################
 
 ###############################################################
 # read config start
-
 #obs reading information
-
-#cC_ObsNetworkDataDir[iC_ObsNet_AeronetSunOrig]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/AeronetSunNRT/data/'
-#cC_ObsNetworkDataDir[iC_ObsNet_AeronetSunRaw20]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/AeronetRaw2.0/renamed/'
-#cC_ObsNetworkDataDir[iC_ObsNet_AeronetSunRaw15]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/AeronetRaw1.5/renamed/'
-#cC_ObsNetworkDataDir[iC_ObsNet_Aethalometer]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/aethalometer/'
-#cC_ObsNetworkDataDir[iC_ObsNet_EBASNRT]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/EBAS_NRT/'
-#cC_ObsNetworkDataDir[iC_ObsNet_AeronetSun20AllPoints]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/AeronetSun2.0AllPoints/renamed/'
-#cC_ObsNetworkDataDir[iC_ObsNet_EBASMultiColumn]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/EBASMultiColumn/'
-#;cC_ObsNetworkDataDir[iC_ObsNet_WOUDCOzoneSonds]='/fou/emep/People/semeena/Measurements/Sondes/NOAA/'
-#cC_ObsNetworkDataDir[iC_ObsNet_WOUDCOzoneSonds]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/NDACC.Ozone.Sondes/'
-#cC_ObsNetworkDataDir[iC_ObsNet_AeronetSunSDADaily]=$
-   #OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/AeronetSun2.0.SDA.daily/renamed/'
 
 #names of the different obs networks
 OBSNET_NONE='NONE'
 NOMODELNAME='OBSERVATIONS-ONLY'
 
-#names of the different obs networks
-AERONETSUN20NAME='AERONETSun2.0'
-AERONETSDA20NAME='AERONETSDA2.0'
-AERONETSUNAPNAME='AeronetSun_2.0_AP'
-EBASMULTICOLUMNNAME='EBASMC'
-AERONNETSUN20NRTNAME='AeronetSun_2.0_NRT'
-EEANAME='EEAAQeRep'
+#default names of the different obs networks
+#might get overwritten from paths.ini
+#Aeronet V2
+AERONET_SUN_V2L15_AOD_DAILY_NAME = 'AeronetSunV2Lev1.5.daily'
+AERONET_SUN_V2L15_AOD_ALL_POINTS_NAME = 'AeronetSun_2.0_NRT'
+AERONET_SUN_V2L2_AOD_DAILY_NAME = 'AeronetSunV2Lev2.daily'
+AERONET_SUN_V2L2_AOD_ALL_POINTS_NAME = 'AeronetSunV2Lev2.AP'
+AERONET_SUN_V2L2_SDA_DAILY_NAME = 'AeronetSDAV2Lev2.daily'
+AERONET_SUN_V2L2_SDA_ALL_POINTS_NAME = 'AeronetSDAV2Lev2.AP'
+#Aeronet V3
+AERONET_SUN_V3L15_AOD_DAILY_NAME = 'AeronetSunV3Lev1.5.daily'
+AERONET_SUN_V3L15_AOD_ALL_POINTS_NAME = 'AeronetSunV3Lev1.5.AP'
+AERONET_SUN_V3L2_AOD_DAILY_NAME = 'AeronetSunV3Lev2.daily'
+AERONET_SUN_V3L2_AOD_ALL_POINTS_NAME = 'AeronetSunV3Lev2.AP'
+AERONET_SUN_V3L2_SDA_DAILY_NAME = 'AeronetSDAV3Lev2.daily'
+AERONET_SUN_V3L2_SDA_ALL_POINTS_NAME = 'AeronetSDAV3Lev2.AP'
+# inversions
+AERONET_INV_V2L15_DAILY_NAME = 'AeronetInvV2Lev1.5.daily'
+AERONET_INV_V2L15_ALL_POINTS_NAME = 'AeronetInvV2Lev1.5.AP'
+AERONET_INV_V2L2_DAILY_NAME = 'AeronetInvV2Lev2.daily'
+AERONET_INV_V2L2_ALL_POINTS_NAME = 'AeronetInvV2Lev2.AP'
+#
+EBAS_MULTICOLUMN_NAME='EBASMC'
+EEA_NAME='EEAAQeRep'
 
-
-#obs data paths
-OBSNETWORK_DATADIR_PREFIX='/lustre/storeA/project/aerocom/'
-CONFIG_OBSDATAPATHS={}
-CONFIG_OBSDATAPATHS[AERONETSUN20NAME]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/AeronetRaw2.0/renamed/'
-CONFIG_OBSDATAPATHS[AERONETSDA20NAME]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/AeronetSun2.0.SDA.daily/renamed/'
-CONFIG_OBSDATAPATHS[EBASMULTICOLUMNNAME]=OBSNETWORK_DATADIR_PREFIX+''
-CONFIG_OBSDATAPATHS[AERONNETSUN20NRTNAME]=OBSNETWORK_DATADIR_PREFIX+''
-CONFIG_OBSDATAPATHS[EEANAME]=OBSNETWORK_DATADIR_PREFIX+'aerocom1/AEROCOM_OBSDATA/EEA_AQeRep.testing/renamed/'
-
+#read paths.ini
+ConfigIni=os.path.join(os.path.dirname(os.path.realpath(__file__)),'paths.ini')
+ReadConfig=configparser.ConfigParser()
+ReadConfig.read(ConfigIni)
+#Model
 #model data paths
-CONFIG_MODELDATAPTHS={}
-OBSNETWORK_DATADIR_PREFIX='/lustre/storeA/project/aerocom/'
+MODELBASEDIR=ReadConfig['modelfolders']['BASEDIR']
+MODELDIRS=ReadConfig['modelfolders']['dir'].replace('${BASEDIR}',MODELBASEDIR).replace('\n','').split(',')
+
+#read obs network names from ini file
+#Aeronet V2
+AERONET_SUN_V2L15_AOD_DAILY_NAME = ReadConfig['obsnames']['AERONET_SUN_V2L15_AOD_DAILY']
+AERONET_SUN_V2L15_AOD_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_SUN_V2L15_AOD_ALL_POINTS']
+AERONET_SUN_V2L2_AOD_DAILY_NAME = ReadConfig['obsnames']['AERONET_SUN_V2L2_AOD_DAILY']
+AERONET_SUN_V2L2_AOD_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_SUN_V2L2_AOD_ALL_POINTS']
+AERONET_SUN_V2L2_SDA_DAILY_NAME = ReadConfig['obsnames']['AERONET_SUN_V2L2_SDA_DAILY']
+AERONET_SUN_V2L2_SDA_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_SUN_V2L2_SDA_ALL_POINTS']
+#Aeronet V3
+AERONET_SUN_V3L15_AOD_DAILY_NAME = ReadConfig['obsnames']['AERONET_SUN_V3L15_AOD_DAILY']
+AERONET_SUN_V3L15_AOD_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_SUN_V3L15_AOD_ALL_POINTS']
+AERONET_SUN_V3L2_AOD_DAILY_NAME = ReadConfig['obsnames']['AERONET_SUN_V3L2_AOD_DAILY']
+AERONET_SUN_V3L2_AOD_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_SUN_V3L2_AOD_ALL_POINTS']
+AERONET_SUN_V3L2_SDA_DAILY_NAME = ReadConfig['obsnames']['AERONET_SUN_V3L2_SDA_DAILY']
+AERONET_SUN_V3L2_SDA_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_SUN_V3L2_SDA_ALL_POINTS']
+# inversions
+AERONET_INV_V2L15_DAILY_NAME = ReadConfig['obsnames']['AERONET_INV_V2L15_DAILY']
+AERONET_INV_V2L15_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_INV_V2L15_ALL_POINTS']
+AERONET_INV_V2L2_DAILY_NAME = ReadConfig['obsnames']['AERONET_INV_V2L2_DAILY']
+AERONET_INV_V2L2_ALL_POINTS_NAME = ReadConfig['obsnames']['AERONET_INV_V2L2_ALL_POINTS']
+#
+EBAS_MULTICOLUMN_NAME = ReadConfig['obsnames']['EBAS_MULTICOLUMN']
+EEA_NAME = ReadConfig['obsnames']['EEA']
 
 
+#observations
+#Folders
+OBSBASEDIR = ReadConfig['obsfolders']['BASEDIR']
+OBSCONFIG = {}
+OBSCONFIG[AERONET_SUN_V2L15_AOD_DAILY_NAME] = {}
+OBSCONFIG[AERONET_SUN_V2L15_AOD_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V2L15_AOD_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V2L15_AOD_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V2L15_AOD_DAILY']
 
-dict_ObsNetworkParam={}
-dict_ObsNetworkParam[AERONETSDA20NAME]={}
-dict_ObsNetworkParam[AERONETSDA20NAME]['DataDir']=(
-	''.join([OBSNETWORK_DATADIR_PREFIX, 'aerocom1/AEROCOM_OBSDATA/AeronetSun2.0.SDA.daily/renamed/']))
-dict_ObsNetworkParam[AERONETSDA20NAME]['cC_ObsNetworkName']=('Obs: AeronetSDA 2.0 daily')
-dict_ObsNetworkParam[AERONETSDA20NAME]['Revision']='20160312'
+OBSCONFIG[AERONET_SUN_V2L15_AOD_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_SUN_V2L15_AOD_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V2L15_AOD_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V2L15_AOD_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V2L15_AOD_ALL_POINTS']
 
-dict_ObsNetworkParam[AERONETSUN20NAME]={}
-dict_ObsNetworkParam[AERONETSUN20NAME]['DataDir']=(
-	''.join([OBSNETWORK_DATADIR_PREFIX, 'aerocom1/AEROCOM_OBSDATA/AeronetRaw2.0/renamed/']))
-dict_ObsNetworkParam[AERONETSUN20NAME]['cC_ObsNetworkName']=('Obs: AeronetSun 2.0')
-dict_ObsNetworkParam[AERONETSUN20NAME]['Revision']='20151121'
+OBSCONFIG[AERONET_SUN_V2L2_AOD_DAILY_NAME] = {}
+OBSCONFIG[AERONET_SUN_V2L2_AOD_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V2L2_AOD_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V2L2_AOD_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V2L2_AOD_DAILY']
 
-dict_ObsNetworkParam[AERONETSUNAPNAME]={}
-dict_ObsNetworkParam[EBASMULTICOLUMNNAME]={}
-dict_ObsNetworkParam[AERONNETSUN20NRTNAME]={}
-dict_ObsNetworkParam[EEANAME]={}
-#dict_ObsNetworkParam[EEANAME]['DataDir']=(
-	#''.join([OBSNETWORK_DATADIR_PREFIX, 'aerocom1/AEROCOM_OBSDATA/EEA_AQeRep/renamed/']))
-dict_ObsNetworkParam[EEANAME]['DataDir']=(
-	''.join([OBSNETWORK_DATADIR_PREFIX, 'aerocom1/AEROCOM_OBSDATA/EEA_AQeRep.testing/renamed/']))
-dict_ObsNetworkParam[EEANAME]['cC_ObsNetworkName']=('Obs: Airbase')
-dict_ObsNetworkParam[EEANAME]['Revision']='201601'
-#dict_ObsNetworkParam['']={}
+OBSCONFIG[AERONET_SUN_V2L2_AOD_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_SUN_V2L2_AOD_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V2L2_AOD_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V2L2_AOD_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V2L2_AOD_ALL_POINTS']
 
-cC_ModelDirs=[]
-#for testing of MFDataset since the original data is netcdf4
-#cC_ModelDirs.append('/lustre/storeB/project/aerocom/user_data/jang/')
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'htap/ECMWF/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom1/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom1/ECLIPSE/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'htap/CCI_AEROSOL_Phase1/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'htap/CCI_AEROSOL_Phase2/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/ACCMIP/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom1/NorESM/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/EMEP_COPERNICUS/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/EMEP/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/EMEP_GLOBAL/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/EMEP_SVN_TEST/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/NorESM_SVN_TEST/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom2/INCA/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'htap/HTAP-PHASE-I/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'htap/HTAP-PHASE-II/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom1/AEROCOM-PHASE-I/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom1/AEROCOM-PHASE-II/']))
-cC_ModelDirs.append(''.join([OBSNETWORK_DATADIR_PREFIX,'aerocom1/AEROCOM-PHASE-III/']))
+OBSCONFIG[AERONET_SUN_V2L2_SDA_DAILY_NAME] = {}
+OBSCONFIG[AERONET_SUN_V2L2_SDA_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V2L2_SDA_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V2L2_SDA_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V2L2_SDA_DAILY']
 
+OBSCONFIG[AERONET_SUN_V2L2_SDA_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_SUN_V2L2_SDA_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V2L2_SDA_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V2L2_SDA_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V2L2_SDA_ALL_POINTS']
 
-# read config end
-###############################################################
+OBSCONFIG[AERONET_SUN_V3L15_AOD_DAILY_NAME] = {}
+OBSCONFIG[AERONET_SUN_V3L15_AOD_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V3L15_AOD_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V3L15_AOD_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V3L15_AOD_DAILY']
 
-cC_StdDevExt='SIGMA'
-#cC_ObsDataCacheDir='./cache/'
+OBSCONFIG[AERONET_SUN_V3L15_AOD_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_SUN_V3L15_AOD_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V3L15_AOD_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V3L15_AOD_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V3L15_AOD_ALL_POINTS']
+
+OBSCONFIG[AERONET_SUN_V3L2_AOD_DAILY_NAME] = {}
+OBSCONFIG[AERONET_SUN_V3L2_AOD_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V3L2_AOD_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V3L2_AOD_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V3L2_AOD_DAILY']
+
+OBSCONFIG[AERONET_SUN_V3L2_AOD_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_SUN_V3L2_AOD_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V3L2_AOD_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V3L2_AOD_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V3L2_AOD_ALL_POINTS']
+
+OBSCONFIG[AERONET_SUN_V3L2_SDA_DAILY_NAME] = {}
+OBSCONFIG[AERONET_SUN_V3L2_SDA_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V3L2_SDA_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V3L2_SDA_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V3L2_SDA_DAILY']
+
+OBSCONFIG[AERONET_SUN_V3L2_SDA_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_SUN_V3L2_SDA_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_SUN_V3L2_SDA_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_SUN_V3L2_SDA_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_SUN_V3L2_SDA_ALL_POINTS']
+
+OBSCONFIG[AERONET_INV_V2L15_DAILY_NAME] = {}
+OBSCONFIG[AERONET_INV_V2L15_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_INV_V2L15_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_INV_V2L15_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_INV_V2L15_DAILY']
+
+OBSCONFIG[AERONET_INV_V2L15_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_INV_V2L15_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_INV_V2L15_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_INV_V2L15_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_INV_V2L15_ALL_POINTS']
+
+OBSCONFIG[AERONET_INV_V2L2_DAILY_NAME] = {}
+OBSCONFIG[AERONET_INV_V2L2_DAILY_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_INV_V2L2_DAILY'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_INV_V2L2_DAILY_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_INV_V2L2_DAILY']
+
+OBSCONFIG[AERONET_INV_V2L2_ALL_POINTS_NAME] = {}
+OBSCONFIG[AERONET_INV_V2L2_ALL_POINTS_NAME]['PATH'] = ReadConfig['obsfolders']['AERONET_INV_V2L2_ALL_POINTS'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[AERONET_INV_V2L2_ALL_POINTS_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['AERONET_INV_V2L2_ALL_POINTS']
+
+OBSCONFIG[EBAS_MULTICOLUMN_NAME] = {}
+OBSCONFIG[EBAS_MULTICOLUMN_NAME]['PATH'] = ReadConfig['obsfolders']['EBAS_MULTICOLUMN'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[EBAS_MULTICOLUMN_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['EBAS_MULTICOLUMN']
+
+OBSCONFIG[EEA_NAME] = {}
+OBSCONFIG[EEA_NAME]['PATH'] = ReadConfig['obsfolders']['EEA'].replace('${BASEDIR}',OBSBASEDIR)
+OBSCONFIG[EEA_NAME]['START_YEAR'] = ReadConfig['obsstartyears']['EEA']
+
 OBSDATACACHEDIR='/lustre/storeA/users/jang/cache/'
-cC_StdNameIniFile='./StdNames.ini'
-
-#DONOTCACHE
-#Revision.txt
-

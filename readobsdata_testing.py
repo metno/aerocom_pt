@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
 		
 	#pdb.set_trace()
-	test=ReadObsData([const.AERONETSDA20NAME], VerboseFlag = True)
+	test=ReadObsData([const.AERONET_SUN_V2L2_SDA_DAILY_NAME], VerboseFlag = True)
 	test.ReadDaily()
 	pdb.set_trace()
 	print(test)

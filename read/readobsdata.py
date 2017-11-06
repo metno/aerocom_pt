@@ -52,7 +52,7 @@ class ReadObsData(ReadAeronetSDAV2,ReadAeronetSunV2):
 	"""aerocom_pt observation data reading class
 	"""
 
-	SUPPORTED_DATASETS = [const.AERONETSDA20NAME, const.AERONETSUN20NAME]
+	SUPPORTED_DATASETS = [const.AERONET_SUN_V2L2_AOD_DAILY_NAME, const.AERONET_SUN_V2L2_SDA_DAILY_NAME]
 	SDA_TEST_FILE='/lustre/storeA/project/aerocom/aerocom1/AEROCOM_OBSDATA/AeronetSun2.0.SDA.daily/renamed/920801_160312_Zvenigorod.ONEILL_20'
 	SUN_TEST_FILE='/lustre/storeA/project/aerocom/aerocom1/AEROCOM_OBSDATA/AeronetRaw2.0/renamed/920801_170401_Zambezi.lev20'
 	#
@@ -67,7 +67,6 @@ class ReadObsData(ReadAeronetSDAV2,ReadAeronetSunV2):
 
 		self.VerboseFlag = VerboseFlag
 		self.data = {}
-		self.index = len(self.data)
 		self.FILEMASKS = []
 		self.__version__ = 0.01
 		self.DATASETNAMES = []
@@ -96,6 +95,8 @@ class ReadObsData(ReadAeronetSDAV2,ReadAeronetSunV2):
 			self.FILEMASKS.append(Dummy.FILEMASK)
 			self.SuperClasses[DataSetToRead] = Dummy
 
+		self.index = len(self.data)
+
 
 	def __iter__(self):
 		return self
@@ -115,6 +116,8 @@ class ReadObsData(ReadAeronetSDAV2,ReadAeronetSunV2):
 
 		return '\n'.join(Out)
 
+	def __getitem__(self, item):
+		return self.data[item]
 
 
 	###################################################################################
