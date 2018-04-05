@@ -48,6 +48,8 @@ from datetime import datetime
 
 ###################################################################################
 from aerocom_pt.read.readmodeldata import *
+import aerocom_pt.plot
+#from aerocom_pt.plot.
 
 if __name__ == '__main__':
 
@@ -60,10 +62,15 @@ if __name__ == '__main__':
     if args.model:
         model = args.model
 
+    #pdb.set_trace()
+    test = ReadModelData(model, '2010-01-01','2011-12-31', VerboseFlag=True)
+    test.Read('od550aer')
+
+    aerocom_pt.plot.plotmaps(test.data,VerboseFlag=True, plotdir="../../aerocom_pt_plots/")
+
     pdb.set_trace()
-    test = ReadModelData(model, '2013-01-01','2013-12-31', VerboseFlag=True)
-    test.ReadDaily()
-    pdb.set_trace()
+    test.data[model].coord('time').bounds
+
     print(test)
 
 

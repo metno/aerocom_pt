@@ -1,12 +1,12 @@
 ################################################################
-# read/__init__.py
+# plot/__init__.py
 #
-# init for data reading
+# init for map plotting
 #
 # this file is part of the aerocom_pt package
 #
 #################################################################
-# Created 20171030 by Jan Griesfeller for Met Norway
+# Created 20171130 by Jan Griesfeller for Met Norway
 #
 # Last changed: See git log
 #################################################################
@@ -31,7 +31,4 @@
 #Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #MA 02110-1301, USA
 
-from aerocom_pt.read.read_aeronet_sdav2 import *
-from aerocom_pt.read.read_aeronet_sunv2 import *
-from aerocom_pt.read.readobsdata import *
-from aerocom_pt.read.readmodeldata import *
+from aerocom_pt.plot.plotmaps import *
