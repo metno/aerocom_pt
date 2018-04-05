@@ -86,7 +86,7 @@ EEA_NAME='EEAAQeRep'
 OBSDATACACHEDIR='/lustre/storeA/users/jang/cache/'
 
 #read paths.ini
-IniFileName = os.path.realpath(__file__)),'paths.ini'
+#IniFileName = os.path.realpath(__file__)),'paths.ini'
 ConfigIni=os.path.join(os.path.dirname(os.path.realpath(__file__)),'paths.ini')
 if os.path.isfile(ConfigIni):
     ReadConfig = configparser.ConfigParser()
